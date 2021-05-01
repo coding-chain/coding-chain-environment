@@ -1,0 +1,8 @@
+[submodule "coding-chain-api"]
+	url = https://github.com/coding-chain/coding-chain-api
+[submodule "coding-chain-android"]
+	url = https://github.com/coding-chain/coding-chain-android
+[submodule "coding-chain-website"]
+	url = https://github.com/coding-chain/coding-chain-website
+[submodule "coding-chain-worker"]
+	url = https://github.com/coding-chain/coding-chain-worker
