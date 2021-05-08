@@ -1,5 +1,5 @@
 # Api
-
+Get subrepositories: git submodule update --init --recursive
 Generate certificate :
 
 ## On Windows
@@ -15,3 +15,4 @@ dotnet dev-certs https --trust
 dotnet dev-certs https -ep ${HOME}/.aspnet/https/CodingChainApi.WebApi.pfx -p { password here }
 dotnet dev-certs https --trust
 ```
+
