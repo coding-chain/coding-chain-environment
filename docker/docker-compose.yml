@@ -32,4 +32,10 @@ services:
       - 1433:1433
     volumes:
       - ./database:/var/opt/mssql/data
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: my-rabbit
+    ports:
+      - 5672:5672
+      - 15672:15672
 
