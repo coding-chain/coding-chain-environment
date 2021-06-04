@@ -74,4 +74,5 @@ fabric.properties
 
 .idea/
 
-docker/database/
+docker/database/**
+!docker/database/.gitkeep
