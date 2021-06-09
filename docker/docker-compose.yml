@@ -3,22 +3,65 @@
 services:
   coding-chain-api:
     container_name: coding-chain-api
+    depends_on:
+      - coding-chain-rabbitmq
+      - coding-chain-db
     image: coding-chain/api
     build:
       context: ../coding-chain-api
     restart: unless-stopped
     ports:
       - 5002:5002
-      - 5003:5003
     environment:
-      ASPNETCORE_URLS: https://+:5003;http://+:5002
+      ASPNETCORE_URLS: http://+:5002
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNECORE_DatabaseSettings_ConnectionString: "Server=coding-chain-db;Database=coding_chain;User Id=sa;Password=codingDevPwd21;"
-      ASPNETCORE_Kestrel__Certificates__Default__Password: codingchainapi
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/CodingChainApi.WebApi.pfx
+      DatabaseSettings:ConnectionString: "Server=coding-chain-db;Database=coding_chain;User Id=sa;Password=codingDevPwd21;"
+      RabbitMqSettings:Host: "coding-chain-rabbitmq"
+      RabbitMqSettings:Port: 5672
+      RabbitMqSettings:Password: "guest"
+      RabbitMqSettings:Username: "guest"
+      CorsSettings:FrontEndUrl: "http://localhost:4200"
+    networks:
+      - coding-chain-network
+
+  coding-chain-web:
+    container_name: "coding-chain-web"
+    image: coding-chain/web
+    build:
+      context: ../coding-chain-website
+      dockerfile: ./Dockerfile
+    working_dir: /app
+    restart: always
+    environment:
+      PORT: 80
+    ports:
+      - "4201:80"
+    networks:
+      - coding-chain-network
+
+  coding-chain-worker:
+    depends_on:
+      - coding-chain-rabbitmq
+    container_name: coding-chain-worker
+    image: coding-chain/worker
+    build:
+      context: ../coding-chain-worker
+    restart: unless-stopped
+    ports:
+      - 5004:5004
+    environment:
+      ASPNETCORE_URLS: http://+:5004
+      ASPNETCORE_ENVIRONMENT: Development
+      RabbitMqSettings:Host: "coding-chain-rabbitmq"
+      RabbitMqSettings:Port: 5672
+      RabbitMqSettings:Password: "guest"
+      RabbitMqSettings:Username: "guest"
+      ElasticSearchSettings:Url: "http://coding-chain-elasticsearch:9200"
     volumes:
-      -  /home/sbailleul/.aspnet/https/:/https
-      -  ./coding-chain-api:/app/AppData
+      -  ./coding-chain-worker/AppData/Templates:/app/AppData/Templates
+    networks:
+      - coding-chain-network
+
 
   coding-chain-db:
     container_name: coding-chain-db
@@ -32,10 +75,58 @@ services:
       - 1433:1433
     volumes:
       - ./database:/var/opt/mssql/data
-  rabbitmq:
+    networks:
+      - coding-chain-network
+  coding-chain-rabbitmq:
+    container_name: coding-chain-rabbitmq
     image: rabbitmq:3-management
-    hostname: my-rabbit
+    restart: unless-stopped
+    hostname: coding-chain-rabbitmq
+    volumes:
+      - ./coding-chain-rabbitmq/conf:/etc/rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
+    networks:
+      - coding-chain-network
 
+  coding-chain-elasticsearch:
+    container_name: coding-chain-elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
+    restart: unless-stopped
+    environment:
+      - node.name=coding-chain-elasticsearch
+      - cluster.name=es-docker-cluster
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - bootstrap.memory_lock=true
+      - cluster.initial_master_nodes=coding-chain-elasticsearch
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - ./coding-chain-elasticsearch:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+    networks:
+      - coding-chain-network
+
+  coding-chain-kibana:
+    container_name: coding-chain-kibana
+    image: docker.elastic.co/kibana/kibana:7.12.0
+    restart: unless-stopped
+    ports:
+      - 5601:5601
+    depends_on:
+      - coding-chain-elasticsearch
+    environment:
+      ELASTICSEARCH_URL: http://coding-chain-elasticsearch:9200
+      ELASTICSEARCH_HOSTS: '["http://coding-chain-elasticsearch:9200"]'
+    networks:
+      - coding-chain-network
+
+networks:
+  coding-chain-network:
+    driver: bridge
+    name: coding-chain-network
