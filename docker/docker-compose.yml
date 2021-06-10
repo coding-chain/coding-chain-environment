@@ -58,7 +58,7 @@ services:
       RabbitMqSettings:Username: "guest"
       ElasticSearchSettings:Url: "http://coding-chain-elasticsearch:9200"
     volumes:
-      -  ./coding-chain-worker/AppData/Templates:/app/AppData/Templates
+      -  ./coding-chain-worker/Templates:/home/app_user/Templates
     networks:
       - coding-chain-network
 
