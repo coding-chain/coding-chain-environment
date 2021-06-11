@@ -76,5 +76,7 @@ fabric.properties
 
 docker/database/**
 !docker/database/.gitkeep
-docker/coding-chain-elasticsearch
-docker/
+docker
+!docker/docker-compose.yml
+!docker/coding-chain-rabbitmq/conf/rabbitmq.conf
+!docker/coding-chain-redis/conf/redis.conf

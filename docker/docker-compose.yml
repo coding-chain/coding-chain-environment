@@ -1,6 +1,7 @@
 ﻿version: "3.9"
 
 services:
+  ## APPLICATIONS ##
   coding-chain-api:
     container_name: coding-chain-api
     depends_on:
@@ -23,7 +24,6 @@ services:
       CorsSettings:FrontEndUrl: "http://localhost:4200"
     networks:
       - coding-chain-network
-
   coding-chain-web:
     container_name: "coding-chain-web"
     image: coding-chain/web
@@ -62,6 +62,7 @@ services:
     networks:
       - coding-chain-network
 
+  ## APPLICATIONS ##
 
   coding-chain-db:
     container_name: coding-chain-db
@@ -125,6 +126,16 @@ services:
       ELASTICSEARCH_HOSTS: '["http://coding-chain-elasticsearch:9200"]'
     networks:
       - coding-chain-network
+  coding-chain-redis:
+    container_name: coding-chain-redis
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - ./coding-chain-redis/conf/redis.conf:/redis.conf
+    networks:
+      - coding-chain-network
+    command: [ "redis-server", "/redis.conf" ]
 
 networks:
   coding-chain-network:
