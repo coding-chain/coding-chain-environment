@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coding-chain-website
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coding-chain-website
+  template:
+    metadata:
+      labels:
+        app: coding-chain-website
+    spec:
+      containers:
+      - name: coding-chain-website
+        image: codingchain.azurecr.io/coding-chain-website:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: CodingChainWebsite
+          value: "Welcome to coding chain website"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coding-chain-website
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+  selector:
+    app: coding-chain-website
