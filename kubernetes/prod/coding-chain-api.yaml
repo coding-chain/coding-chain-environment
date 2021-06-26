@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coding-chain-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coding-chain-api
+  template:
+    metadata:
+      labels:
+        app: coding-chain-api
+    spec:
+      containers:
+      - name: coding-chain-api
+        image: codingchain.azurecr.io/coding-chain-api:latest
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        env:
+        - name: CodingChainApi
+          value: "Welcome to coding chain api"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coding-chain-api
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 443
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: coding-chain-api
