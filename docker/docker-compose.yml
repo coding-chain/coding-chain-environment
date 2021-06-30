@@ -21,9 +21,13 @@ services:
       RabbitMqSettings:Port: 5672
       RabbitMqSettings:Password: "guest"
       RabbitMqSettings:Username: "guest"
-      CorsSettings:FrontEndUrl: "http://localhost:4200"
+      CorsSettings:FrontEndUrl: "http://localhost:4201"
+      RedisCacheSettings:ConnectionString:
     networks:
       - coding-chain-network
+    volumes:
+      - ./coding-chain-api/Tournaments:/home/app_user/AppData/Tournaments
+
   coding-chain-web:
     container_name: "coding-chain-web"
     image: coding-chain/web
@@ -63,7 +67,6 @@ services:
       - coding-chain-network
 
   ## APPLICATIONS ##
-
   coding-chain-db:
     container_name: coding-chain-db
     restart: unless-stopped
@@ -78,6 +81,7 @@ services:
       - ./database:/var/opt/mssql/data
     networks:
       - coding-chain-network
+
   coding-chain-rabbitmq:
     container_name: coding-chain-rabbitmq
     image: rabbitmq:3-management
