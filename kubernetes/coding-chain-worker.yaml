@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coding-chain-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coding-chain-worker
+  template:
+    metadata:
+      labels:
+        app: coding-chain-worker
+    spec:
+      containers:
+      - name: coding-chain-worker
+        image: codingchain.azurecr.io/coding-chain-worker:latest
+        ports:      
+        - containerPort: 5004
+        env:
+        - name: CodingChainWorker
+          value: "Welcome to coding chain Worker"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coding-chain-worker
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 5004
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: coding-chain-worker
