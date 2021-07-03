@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: coding-chain-ingress-controller
-  namespace: coding-chain
+  namespace: default
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
@@ -45,7 +45,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: coding-chain-ingress-static
-  namespace: coding-chain
+  namespace: default
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
