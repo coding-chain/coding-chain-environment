@@ -34,6 +34,9 @@ jobs:
         run: |
           az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTER_NAME
           kubectl config current-context
+          kubectl apply -f coding-chain-api.yaml
+          kubectl apply -f coding-chain-worker.yaml
+          kubectl apply -f coding-chain-website.yaml
           kubectl rollout restart deployment coding-chain-api
           kubectl rollout restart deployment coding-chain-website
           kubectl rollout restart deployment coding-chain-worker
