@@ -1,0 +1,40 @@
+# This workflow will build a docker container, publish it to Azure Container Registry, and deploy it to ACR when a release is created
+
+name: Build and Deploy to Azure
+
+on:
+  release:
+    types: [ published ]
+      # Environment variables available to all jobs and steps in this workflow
+env:
+  GITHUB_SHA: ${{ github.sha }}
+  ACR_REGISTRY_NAME: ${{ secrets.ACR_REGISTRY_NAME }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}
+  DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+  AKS_RESOURCE_GROUP: ${{ secrets.AKS_RESOURCE_GROUP }}
+  AKS_CLUSTER_NAME: ${{ secrets.AKS_CLUSTER_NAME }}
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Download and Install AZURE CLOUD CLI
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # Deploy the Docker image to the ACR cluster
+      - name: Deploy to ACR
+        run: |
+          az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTER_NAME
+          kubectl config current-context
+          kubectl rollout restart deployment coding-chain-api
+          kubectl rollout restart deployment coding-chain-website
+          kubectl rollout restart deployment coding-chain-worker
+
