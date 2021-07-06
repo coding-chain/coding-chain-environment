@@ -18,8 +18,8 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: CodingChainWebsite
-          value: "Welcome to coding chain website"
+        - name: PORT
+          value: "80"
 ---
 apiVersion: v1
 kind: Service

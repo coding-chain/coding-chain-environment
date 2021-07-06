@@ -21,6 +21,8 @@ spec:
         env:
         - name: DatabaseSettings__ConnectionString
           value: "Server=tcp:coding-chain.database.windows.net,1433;Initial Catalog=coding-chain-db;Persist Security Info=False;User ID=CodingChain;Password=codingDevPwd21;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        - name: RedisCacheSettings__ConnectionString
+          value: "coding-chain.redis.cache.windows.net:6380,password=uQ7aJqishlVTAxpmIiBYXjR0JVMDnb55eTz+pGUTezY=,ssl=True,abortConnect=False"
         volumeMounts:
           - name: azure
             mountPath: /app/AppData/Tournaments
