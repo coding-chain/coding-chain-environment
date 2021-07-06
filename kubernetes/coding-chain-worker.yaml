@@ -15,11 +15,20 @@ spec:
       containers:
       - name: coding-chain-worker
         image: codingchain.azurecr.io/coding-chain-worker:latest
-        ports:      
+        ports:
         - containerPort: 5004
         env:
         - name: CodingChainWorker
           value: "Welcome to coding chain Worker"
+        volumeMounts:
+          - name: azure
+            mountPath: /home/app_user/Templates
+      volumes:
+        - name: azure
+          azureFile:
+            secretName: worker-storage-secret
+            shareName: worker
+            readOnly: false
 ---
 apiVersion: v1
 kind: Service

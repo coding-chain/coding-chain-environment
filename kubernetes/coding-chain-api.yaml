@@ -19,8 +19,17 @@ spec:
         - containerPort: 80
         - containerPort: 443
         env:
-        - name: CodingChainApi
-          value: "Welcome to coding chain api"
+        - name: DatabaseSettings__ConnectionString
+          value: "Server=tcp:coding-chain.database.windows.net,1433;Initial Catalog=coding-chain-db;Persist Security Info=False;User ID=CodingChain;Password=codingDevPwd21;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        volumeMounts:
+          - name: azure
+            mountPath: /app/AppData/Tournaments
+      volumes:
+        - name: azure
+          azureFile:
+            secretName: api-storage-secret
+            shareName: api
+            readOnly: false
 ---
 apiVersion: v1
 kind: Service

@@ -12,13 +12,6 @@ spec:
   rules:
   - http:
       paths:
-      - path: /website
-        pathType: Prefix
-        backend:
-          service:
-            name: coding-chain-website
-            port:
-              number: 80
       - path: /(.*)
         pathType: Prefix
         backend:
